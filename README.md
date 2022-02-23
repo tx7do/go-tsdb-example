@@ -16,19 +16,19 @@
 - **Field/Value**：指标列，代表数据的测量值，可以是单值也可以是多值
 
 ## 时序数据库
-- [x] [InfluxDB](influxdb/README.md)
-- [ ] [ClickHouse](clickhouse/README.md)
-- [x] [TimescaleDB](timescaledb/README.md)
-- [x] [ElasticSearch](es/README.md)
-- [x] [MongoDB](mongodb/README.md)
-- [ ] [OpenTSDB](opentsdb/README.md)
-- [ ] [QuestDB](questdb/README.md)
-- [ ] [TDEngine](tdengine/README.md)
-- [ ] [Cassandra](cassandra/README.md)
-- [ ] [CrateDB](cratedb/README.md)
-- [ ] [SiriDB](siridb/README.md)
-- [ ] [Timestream](timestream/README.md)
-- [ ] [VictoriaMetrics](victoriametrics/README.md)
+- [x] [InfluxDB](db/influxdb/README.md)
+- [x] [ClickHouse](db/clickhouse/README.md)
+- [x] [TimescaleDB](db/timescaledb/README.md)
+- [x] [ElasticSearch](db/es/README.md)
+- [x] [MongoDB](db/mongodb/README.md)
+- [x] [OpenTSDB](db/opentsdb/README.md)
+- [x] [QuestDB](db/questdb/README.md)
+- [x] [TDEngine](db/tdengine/README.md)
+- [x] [Cassandra](db/cassandra/README.md)
+- [ ] [CrateDB](db/cratedb/README.md)
+- [ ] [SiriDB](db/siridb/README.md)
+- [ ] [Timestream](db/timestream/README.md)
+- [ ] [VictoriaMetrics](db/victoriametrics/README.md)
 
 ## 参考资料
 
