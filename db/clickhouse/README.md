@@ -32,3 +32,4 @@ docker run -d \
 - [京东ClickHouse的实践之路](https://www.modb.pro/db/223781)
 - [ClickHouse 在有赞的实践之路](https://tech.youzan.com/clickhouse-zai-you-zan-de-shi-jian-zhi-lu/)
 - [ClickHouse物化视图在微信的实战经验](https://www.modb.pro/db/70716)
+- [clickhouse如何玩转时序数据](https://community.qingcloud.com/assets/uploads/files/1553759734256-clickhouse%E5%A6%82%E4%BD%95%E7%8E%A9%E8%BD%AC%E6%97%B6%E5%BA%8F%E6%95%B0%E6%8D%AE-%E5%BC%A0%E5%81%A5.pdf)

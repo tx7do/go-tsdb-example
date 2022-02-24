@@ -17,7 +17,7 @@ var (
 
 const (
 	userIndex   = "user"
-	weiboIndex  = "weibo"
+	tweetIndex  = "tweet"
 	sensorIndex = "sensor"
 )
 
@@ -50,8 +50,8 @@ func TestCreateIndex(t *testing.T) {
 	}
 
 	{
-		//_ = client.DeleteIndex(esCtx, weiboIndex)
-		err := client.CreateIndex(esCtx, weiboIndex, model.WeiboMapping)
+		//_ = client.DeleteIndex(esCtx, tweetIndex)
+		err := client.CreateIndex(esCtx, tweetIndex, TweetMapping)
 		assert.Nil(t, err)
 	}
 
@@ -69,7 +69,7 @@ func TestDeleteIndex(t *testing.T) {
 	err := client.DeleteIndex(esCtx, userIndex)
 	assert.Nil(t, err)
 
-	err = client.DeleteIndex(esCtx, weiboIndex)
+	err = client.DeleteIndex(esCtx, tweetIndex)
 	assert.Nil(t, err)
 
 	err = client.DeleteIndex(esCtx, sensorIndex)
@@ -98,10 +98,9 @@ func TestInsertData(t *testing.T) {
 	}
 
 	{
-		// http://localhost:9200/weibo/_search?q=*&pretty
-		weiboOne := model.Weibo{User: "olive", Message: "打酱油的一天", Retweets: 0}
+		tweetOne := Tweet{User: "olive", Message: "打酱油的一天", Retweets: 0}
 
-		err := client.InsertData(esCtx, weiboIndex, "", weiboOne)
+		err := client.InsertData(esCtx, tweetIndex, "", tweetOne)
 		assert.Nil(t, err)
 	}
 }

@@ -39,7 +39,7 @@ func TestNewTimeScaleDBClient(t *testing.T) {
 }
 
 func TestCreateTable(t *testing.T) {
-	// https://docs.timescale.com/timescaledb/latest/quick-start/golang/
+	// https://docs.timescale.com/timescaledb/latest/tutorials/simulate-iot-sensor-data/#step1
 	queryCreateTable := `CREATE TABLE sensors (
 		id SERIAL PRIMARY KEY,
 		type VARCHAR(50), location VARCHAR(50)
@@ -152,4 +152,156 @@ func TestQueryDataTSDB(t *testing.T) {
 	for _, v := range results {
 		fmt.Printf("Time bucket: %s | Avg: %f\n", &v.Bucket, v.Avg)
 	}
+}
+
+func TestTelemetry(t *testing.T) {
+	entityId := "ad2bfe60-7514-11ec-9a90-af0223be0666"
+	timestamp := time.Now().UnixNano()
+
+	var humidity = 56.4
+	var temperature = 20.0
+
+	{
+		keyId := getOrSaveKeyId("humidity")
+		assert.NotEqual(t, keyId, -1)
+		kv := convertToTsKv(entityId, keyId, timestamp, humidity)
+		err := saveOrUpdateTsKv(kv)
+		assert.Nil(t, err)
+		err = saveOrUpdateTsKvLatest(kv)
+		assert.Nil(t, err)
+	}
+
+	{
+		keyId := getOrSaveKeyId("temperature")
+		assert.NotEqual(t, keyId, -1)
+		kv := convertToTsKv(entityId, keyId, timestamp, temperature)
+		err := saveOrUpdateTsKv(kv)
+		assert.Nil(t, err)
+		err = saveOrUpdateTsKvLatest(kv)
+		assert.Nil(t, err)
+	}
+}
+
+func convertToTsKv(entityId string, key int, timestamp int64, value interface{}) *model.TsKv {
+	var kv model.TsKv
+	kv.EntityId = entityId
+	kv.Key = key
+	kv.Timestamp = timestamp
+	switch t := value.(type) {
+	case bool:
+		kv.BoolV = &t
+	case string:
+		kv.StringV = &t
+	case int64:
+		kv.LongV = &t
+	case float64:
+		kv.DoubleV = &t
+	}
+	return &kv
+}
+
+func getOrSaveKeyId(key string) int {
+	keyId := getKeyId(key)
+	if keyId == -1 {
+		if saveKeyId(key) == nil {
+			return getKeyId(key)
+		} else {
+			return -1
+		}
+	} else {
+		return keyId
+	}
+}
+
+func getKeyId(key string) int {
+	sql := `
+       SELECT key_id
+       FROM ts_kv_dictionary
+       WHERE ts_kv_dictionary.key = $1;
+       `
+	jsons, err := client.Query(ctx, sql, key)
+	if err != nil {
+		return -1
+	}
+
+	type Result struct {
+		KeyId int `json:"key_id"`
+	}
+
+	var results []Result
+	err = json.Unmarshal(jsons, &results)
+	if err != nil {
+		return -1
+	}
+	if len(results) != 1 {
+		return -1
+	}
+
+	return results[0].KeyId
+}
+
+func saveKeyId(key string) error {
+	sql := `
+	  INSERT INTO ts_kv_dictionary (key) VALUES ($1);
+	  `
+	return client.ExecuteSQL(ctx, sql, key)
+}
+
+func saveOrUpdateTsKv(value *model.TsKv) error {
+	sql := `
+INSERT INTO ts_kv (entity_id, key, ts, bool_v, str_v, long_v, dbl_v, json_v)
+VALUES ($1, $2, $3, $4, $5, $6, $7, cast($8 AS json))
+ON CONFLICT (entity_id, key, ts) DO UPDATE SET bool_v = $4,
+                                               str_v  = $5,
+                                               long_v = $6,
+                                               dbl_v  = $7,
+                                               json_v = cast($8 AS json);
+	  `
+	return client.ExecuteSQL(ctx, sql, value.EntityId, value.Key, value.Timestamp,
+		getValueOrNull(value.BoolV), getValueOrNull(value.StringV), getValueOrNull(value.LongV), getValueOrNull(value.DoubleV), getValueOrNull(value.JsonV))
+}
+
+func saveOrUpdateTsKvLatest(value *model.TsKv) error {
+	sql := `
+INSERT INTO ts_kv_latest (entity_id, key, ts, bool_v, str_v, long_v, dbl_v, json_v)
+VALUES ($1, $2, $3, $4, $5, $6, $7, cast($8 AS json))
+ON CONFLICT (entity_id, key) DO UPDATE SET ts     = $3,
+                                           bool_v = $4,
+                                           str_v  = $5,
+                                           long_v = $6,
+                                           dbl_v  = $7,
+                                           json_v = cast($8 AS json);
+	  `
+	return client.ExecuteSQL(ctx, sql, value.EntityId, value.Key, value.Timestamp,
+		getValueOrNull(value.BoolV), getValueOrNull(value.StringV), getValueOrNull(value.LongV), getValueOrNull(value.DoubleV), getValueOrNull(value.JsonV))
+}
+
+func getValueOrNull(value interface{}) interface{} {
+	switch t := value.(type) {
+	case *bool:
+		if t == nil {
+			return nil
+		} else {
+			return *t
+		}
+	case *string:
+		if t == nil {
+			return nil
+		} else {
+			return *t
+		}
+	case *int64:
+		if t == nil {
+			return nil
+		} else {
+			return *t
+		}
+	case *float64:
+		if t == nil {
+			return nil
+		} else {
+			return *t
+		}
+	}
+	return nil
 }

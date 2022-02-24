@@ -1,11 +1,11 @@
-package model
+package es
 
 import (
 	"github.com/olivere/elastic/v7"
 	"time"
 )
 
-type Weibo struct {
+type Tweet struct {
 	User     string                `json:"user"`               // 用户
 	Message  string                `json:"message"`            // 微博内容
 	Retweets int                   `json:"retweets"`           // 转发数
@@ -16,7 +16,7 @@ type Weibo struct {
 	Suggest  *elastic.SuggestField `json:"suggest_field,omitempty"`
 }
 
-const WeiboMapping = `
+const TweetMapping = `
 {
   "mappings": {
     "properties": {

@@ -3,6 +3,23 @@ CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 -- 创建PostGIS扩展
 CREATE EXTENSION IF NOT EXISTS postgis CASCADE;
 
+-- 创建属性键值表
+CREATE TABLE IF NOT EXISTS attribute_kv
+(
+    entity_type    varchar(255),
+    entity_id      uuid,
+    attribute_type varchar(255),
+    attribute_key  varchar(255),
+    bool_v         boolean,
+    str_v          varchar(10000000),
+    long_v         bigint,
+    dbl_v          double precision,
+    json_v         json,
+    last_update_ts bigint,
+    CONSTRAINT attribute_kv_pkey PRIMARY KEY (entity_type, entity_id, attribute_type, attribute_key)
+);
+CREATE INDEX IF NOT EXISTS idx_attribute_kv_by_key_and_last_update_ts ON attribute_kv (entity_id, attribute_key, last_update_ts desc);
+
 -- 创建时序表
 CREATE TABLE IF NOT EXISTS ts_kv
 (
