@@ -66,9 +66,9 @@ func (c *Client) Close() {
 }
 
 // ExecuteQuery executes a query and returns an error if any
-func (c *Client) ExecuteQuery(query string) error {
+func (c *Client) ExecuteQuery(query string, args ...interface{}) error {
 	if c.cli == nil {
 		return errors.New("client not connect server")
 	}
-	return c.cli.Query(query).Exec()
+	return c.cli.Query(query, args...).Exec()
 }
