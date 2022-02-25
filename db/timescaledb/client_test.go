@@ -154,6 +154,10 @@ func TestQueryDataTSDB(t *testing.T) {
 	}
 }
 
+func TestAttributes(t *testing.T) {
+
+}
+
 func TestTelemetry(t *testing.T) {
 	entityId := "ad2bfe60-7514-11ec-9a90-af0223be0666"
 	timestamp := time.Now().UnixNano()
@@ -180,24 +184,6 @@ func TestTelemetry(t *testing.T) {
 		err = saveOrUpdateTsKvLatest(kv)
 		assert.Nil(t, err)
 	}
-}
-
-func convertToTsKv(entityId string, key int, timestamp int64, value interface{}) *model.TsKv {
-	var kv model.TsKv
-	kv.EntityId = entityId
-	kv.Key = key
-	kv.Timestamp = timestamp
-	switch t := value.(type) {
-	case bool:
-		kv.BoolV = &t
-	case string:
-		kv.StringV = &t
-	case int64:
-		kv.LongV = &t
-	case float64:
-		kv.DoubleV = &t
-	}
-	return &kv
 }
 
 func getOrSaveKeyId(key string) int {
@@ -304,4 +290,22 @@ func getValueOrNull(value interface{}) interface{} {
 		}
 	}
 	return nil
+}
+
+func convertToTsKv(entityId string, key int, timestamp int64, value interface{}) *model.TsKv {
+	var kv model.TsKv
+	kv.EntityId = entityId
+	kv.Key = key
+	kv.Timestamp = timestamp
+	switch t := value.(type) {
+	case bool:
+		kv.BoolV = &t
+	case string:
+		kv.StringV = &t
+	case int64:
+		kv.LongV = &t
+	case float64:
+		kv.DoubleV = &t
+	}
+	return &kv
 }

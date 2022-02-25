@@ -33,9 +33,9 @@ func TestTelemetry(t *testing.T) {
 
 	{
 		keyId := "humidity"
-		var partition int64 = 1
 		kv := convertToTsKv(entityId, timestamp, humidity)
-		err := saveOrUpdateTsKv(keyId, partition, kv)
+
+		err := saveOrUpdateTsKv(keyId, kv)
 		assert.Nil(t, err)
 		err = saveOrUpdateTsKvLatest(keyId, kv)
 		assert.Nil(t, err)
@@ -43,13 +43,16 @@ func TestTelemetry(t *testing.T) {
 
 	{
 		keyId := "temperature"
-		var partition int64 = 1
 		kv := convertToTsKv(entityId, timestamp, temperature)
-		err := saveOrUpdateTsKv(keyId, partition, kv)
+		err := saveOrUpdateTsKv(keyId, kv)
 		assert.Nil(t, err)
 		err = saveOrUpdateTsKvLatest(keyId, kv)
 		assert.Nil(t, err)
 	}
+}
+
+func TestToPartitionTs(t *testing.T) {
+	assert.Equal(t, toPartitionTs(1645714787540161800), int64(1645714787540))
 }
 
 func convertToTsKv(entityId string, timestamp int64, value interface{}) *model.TsKv {
@@ -99,7 +102,15 @@ func getValueOrNull(value interface{}) interface{} {
 	return nil
 }
 
-func saveOrUpdateTsKv(key string, partition int64, value *model.TsKv) error {
+func toPartitionTs(ts int64) int64 {
+	var partition int64 = 0
+	partition = time.Unix(0, ts).UnixMilli()
+	return partition
+}
+
+func saveOrUpdateTsKv(key string, value *model.TsKv) error {
+	partition := toPartitionTs(value.Timestamp)
+	_ = saveOrUpdateTsKvPartition(value.EntityId, key, partition)
 	sql := `
 INSERT INTO thingsboard.ts_kv_cf (entity_type, entity_id, key, partition, ts, bool_v, str_v, long_v, dbl_v, json_v)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
