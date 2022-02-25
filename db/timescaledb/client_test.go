@@ -1,15 +1,19 @@
 package timescaledb
 
 import (
-	"cmd/model"
+	"go-tsdb-example/db/timescaledb/ent"
+	"go-tsdb-example/model"
+
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"os"
 	"testing"
 	"time"
+
+	_ "github.com/lib/pq"
+	"github.com/stretchr/testify/assert"
 )
 
 var (
@@ -22,7 +26,9 @@ var (
 
 func init() {
 	rand.Seed(time.Now().Unix())
+}
 
+func initDataBaseConnect() {
 	ctx = context.Background()
 
 	host := "localhost:5432"
@@ -34,11 +40,26 @@ func init() {
 	_ = client.Connect(ctx)
 }
 
+func initEntDataBaseConnect() {
+	cli, err := ent.Open("postgres", "host=localhost port=5432 user=postgres password=123456 dbname=test sslmode=disable")
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+	// Run the auto migration tool.
+	if err := cli.Schema.Create(context.Background()); err != nil {
+		fmt.Printf("failed creating schema resources: %v \n", err)
+	}
+}
+
 func TestNewTimeScaleDBClient(t *testing.T) {
+	initDataBaseConnect()
 	assert.NotNil(t, client)
 }
 
 func TestCreateTable(t *testing.T) {
+	initDataBaseConnect()
+
 	// https://docs.timescale.com/timescaledb/latest/tutorials/simulate-iot-sensor-data/#step1
 	queryCreateTable := `CREATE TABLE sensors (
 		id SERIAL PRIMARY KEY,
@@ -59,6 +80,8 @@ func TestCreateTable(t *testing.T) {
 }
 
 func TestInsertDataRDB(t *testing.T) {
+	initDataBaseConnect()
+
 	sensorTypes := []string{"a", "a", "b", "b"}
 	sensorLocations := []string{"floor", "ceiling", "floor", "ceiling"}
 
@@ -76,6 +99,8 @@ func TestInsertDataRDB(t *testing.T) {
 }
 
 func TestInsertDataTSDB(t *testing.T) {
+	initDataBaseConnect()
+
 	queryDataGeneration := `
        SELECT generate_series(now() - interval '24 hour', now(), interval '5 minute') AS time,
        floor(random() * (3) + 1)::int as sensor_id,
@@ -106,6 +131,8 @@ func TestInsertDataTSDB(t *testing.T) {
 }
 
 func TestQueryDataGenerateSeries(t *testing.T) {
+	initDataBaseConnect()
+
 	queryDataGeneration := `
        SELECT generate_series(now() - interval '24 hour', now(), interval '5 minute') AS time,
        floor(random() * (3) + 1)::int as sensor_id,
@@ -124,6 +151,8 @@ func TestQueryDataGenerateSeries(t *testing.T) {
 }
 
 func TestQueryDataTSDB(t *testing.T) {
+	initDataBaseConnect()
+
 	// https://docs.timescale.com/timescaledb/latest/tutorials/simulate-iot-sensor-data
 	// Note the use of prepared statement placeholders $1 and $2
 	queryTimeBucketFiveMin := `
@@ -154,11 +183,17 @@ func TestQueryDataTSDB(t *testing.T) {
 	}
 }
 
+func TestSensorEnt(t *testing.T) {
+	initEntDataBaseConnect()
+}
+
 func TestAttributes(t *testing.T) {
 
 }
 
 func TestTelemetry(t *testing.T) {
+	initDataBaseConnect()
+
 	entityId := "ad2bfe60-7514-11ec-9a90-af0223be0666"
 	timestamp := time.Now().UnixNano()
 
