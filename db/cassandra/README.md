@@ -20,3 +20,4 @@ docker run -itd \
 - [官方网站](https://cassandra.apache.org/_/index.html)
 - [Github代码库](https://github.com/apache/cassandra)
 - [Five Data Models for IoT: Managing the Latest IoT Events Based on a State in Apache Cassandra](https://jaxenter.com/apache-cassandra-iot-174970.html)
+- [timescale简介](https://www.jianshu.com/p/3e2e5847f70a)

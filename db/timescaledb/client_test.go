@@ -1,6 +1,7 @@
 package timescaledb
 
 import (
+	"github.com/google/uuid"
 	"go-tsdb-example/db/timescaledb/ent"
 	"go-tsdb-example/model"
 
@@ -329,7 +330,8 @@ func getValueOrNull(value interface{}) interface{} {
 
 func convertToTsKv(entityId string, key int, timestamp int64, value interface{}) *model.TsKv {
 	var kv model.TsKv
-	kv.EntityId = entityId
+	uEntityId, _ := uuid.Parse(entityId)
+	kv.EntityId = uEntityId
 	kv.Key = key
 	kv.Timestamp = timestamp
 	switch t := value.(type) {
