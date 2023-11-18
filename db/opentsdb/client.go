@@ -2,6 +2,7 @@ package opentsdb
 
 import (
 	"fmt"
+
 	"github.com/bluebreezecf/opentsdb-goclient/client"
 	"github.com/bluebreezecf/opentsdb-goclient/config"
 )

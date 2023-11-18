@@ -1,11 +1,14 @@
 package cassandra
 
 import (
-	"cmd/model"
-	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"testing"
 	"time"
+
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+
+	"go-tsdb-example/model"
 )
 
 var (
@@ -56,8 +59,9 @@ func TestToPartitionTs(t *testing.T) {
 }
 
 func convertToTsKv(entityId string, timestamp int64, value interface{}) *model.TsKv {
+	entityUUid, _ := uuid.Parse(entityId)
 	var kv model.TsKv
-	kv.EntityId = entityId
+	kv.EntityId = entityUUid
 	kv.Timestamp = timestamp
 	switch t := value.(type) {
 	case bool:
@@ -110,7 +114,7 @@ func toPartitionTs(ts int64) int64 {
 
 func saveOrUpdateTsKv(key string, value *model.TsKv) error {
 	partition := toPartitionTs(value.Timestamp)
-	_ = saveOrUpdateTsKvPartition(value.EntityId, key, partition)
+	_ = saveOrUpdateTsKvPartition(value.EntityId.String(), key, partition)
 	sql := `
 INSERT INTO thingsboard.ts_kv_cf (entity_type, entity_id, key, partition, ts, bool_v, str_v, long_v, dbl_v, json_v)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);

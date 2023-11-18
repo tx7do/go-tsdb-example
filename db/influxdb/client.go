@@ -3,10 +3,11 @@ package influxdb
 import (
 	"context"
 	"fmt"
-	"github.com/influxdata/influxdb-client-go/v2"
-	"github.com/influxdata/influxdb-client-go/v2/domain"
 	"math/rand"
 	"time"
+
+	"github.com/influxdata/influxdb-client-go/v2"
+	"github.com/influxdata/influxdb-client-go/v2/domain"
 )
 
 type Options struct {

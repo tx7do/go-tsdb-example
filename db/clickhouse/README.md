@@ -40,3 +40,5 @@ docker run -d \
 - [解读clickhouse存算分离在华为云实践](https://juejin.cn/post/7018065345474723853)
 - [基于Flink+ClickHouse打造轻量级点击流实时数仓](https://juejin.cn/post/6883745613255540749)
 - [每天十亿级数据更新，秒出查询结果，ClickHouse在携程酒店的应用](https://juejin.cn/post/6844903875309207566)
+- [一文看懂 ClickHouse vs Elasticsearch：谁更胜一筹？](https://www.modb.pro/db/58776)
+- [趣头条基于 Flink+ClickHouse 构建实时数据分析平台](https://blog.51cto.com/u_15259710/2900814)

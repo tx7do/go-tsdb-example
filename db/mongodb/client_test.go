@@ -1,15 +1,16 @@
 package mongodb
 
 import (
-	"cmd/model"
 	"context"
 	"fmt"
-	"github.com/stretchr/testify/assert"
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"math/rand"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
+	"go-tsdb-example/model"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // https://cloud.tencent.com/document/product/652/14631#.E6.99.AE.E9.80.9A.E8.81.9A.E5.90.88

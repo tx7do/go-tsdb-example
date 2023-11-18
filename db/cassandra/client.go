@@ -2,8 +2,9 @@ package cassandra
 
 import (
 	"errors"
-	"github.com/gocql/gocql"
 	"time"
+
+	"github.com/gocql/gocql"
 )
 
 type Client struct {

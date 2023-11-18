@@ -1,10 +1,10 @@
 package es
 
 import (
-	"cmd/model"
 	"context"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"go-tsdb-example/model"
 	"math/rand"
 	"strconv"
 	"testing"

@@ -1,10 +1,6 @@
 package timescaledb
 
 import (
-	"github.com/google/uuid"
-	"go-tsdb-example/db/timescaledb/ent"
-	"go-tsdb-example/model"
-
 	"context"
 	"encoding/json"
 	"fmt"
@@ -13,8 +9,13 @@ import (
 	"testing"
 	"time"
 
-	_ "github.com/lib/pq"
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+
+	_ "github.com/lib/pq"
+
+	"go-tsdb-example/db/timescaledb/ent"
+	"go-tsdb-example/model"
 )
 
 var (

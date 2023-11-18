@@ -4,10 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/olivere/elastic/v7"
 	"log"
 	"os"
 	"time"
+
+	"github.com/olivere/elastic/v7"
 )
 
 type Options struct {
